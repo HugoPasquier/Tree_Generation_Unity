@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TreeDrawer : MonoBehaviour
 {
-    struct Branch {
+    struct StructBranch {
         public Vector3 position;
         public Quaternion rotation;
         public float radius;
@@ -43,7 +43,7 @@ public class TreeDrawer : MonoBehaviour
             
             GameObject Parent = new GameObject("Parent");
 
-            Stack<Branch> positionStack = new Stack<Branch>();
+            Stack<StructBranch> positionStack = new Stack<StructBranch>();
             //gameObject.transform.forward = gameObject.transform.up;
             
 
@@ -88,10 +88,10 @@ public class TreeDrawer : MonoBehaviour
                         gameObject.transform.Rotate(new Vector3(0, Random.Range(-180.0f, 0.0f), 0), Space.World);
                         break;
                     case '[':
-                        positionStack.Push(new Branch() { position = gameObject.transform.position, rotation = gameObject.transform.rotation, radius = actualRadius, depth = depth });
+                        positionStack.Push(new StructBranch() { position = gameObject.transform.position, rotation = gameObject.transform.rotation, radius = actualRadius, depth = depth });
                         break;
                     case ']':
-                        Branch newTransform = positionStack.Pop();
+                        StructBranch newTransform = positionStack.Pop();
                         gameObject.transform.position = newTransform.position;
                         gameObject.transform.rotation = newTransform.rotation;
                         actualRadius = newTransform.radius;
@@ -133,7 +133,7 @@ public class TreeDrawer : MonoBehaviour
 
         GameObject Parent = new GameObject("Parent");
 
-        Stack<Branch> positionStack = new Stack<Branch>();
+        Stack<StructBranch> positionStack = new Stack<StructBranch>();
         gameObject.transform.forward = gameObject.transform.up;
 
         int branchIndex = 0;
@@ -179,10 +179,10 @@ public class TreeDrawer : MonoBehaviour
                         gameObject.transform.Rotate(Vector3.up, Random.Range(0, 360));
                         break;
                     case '[':
-                        positionStack.Push(new Branch() { position = gameObject.transform.position, rotation = gameObject.transform.rotation, radius = actualRadius, depth = depth });
+                        positionStack.Push(new StructBranch() { position = gameObject.transform.position, rotation = gameObject.transform.rotation, radius = actualRadius, depth = depth });
                         break;
                     case ']':
-                        Branch newTransform = positionStack.Pop();
+                        StructBranch newTransform = positionStack.Pop();
                         gameObject.transform.position = newTransform.position;
                         gameObject.transform.rotation = newTransform.rotation;
                         actualRadius = newTransform.radius;
