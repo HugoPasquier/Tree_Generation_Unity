@@ -14,6 +14,7 @@ public class TreeDrawer : MonoBehaviour
 
 
     // Site to draw the tree : https://piratefsh.github.io/p5js-art/public/lsystems/
+    // Test Tree : F[-F[-F[-F]+F]+F[-F]+F]+F[-F[-F]+F]+F[-F]+F
 
     public bool next;
 
@@ -30,95 +31,102 @@ public class TreeDrawer : MonoBehaviour
     // Line renderer parameters
     public float LineWidth = 0.1f;
     public float radius = 0.1f;
-    private float actualRadius = 0.1f;
+    public float radiusReduction = 0.9f;
+    private float actualRadius;
     private int depth = 0;
+    public bool isStepByStep = true;
+    public float branchLen = 1.0f;
 
     public void DrawTree() {
-        /*
-        GameObject Parent = new GameObject("Parent");
+        actualRadius = radius;
+        if (!isStepByStep) {
+            
+            GameObject Parent = new GameObject("Parent");
 
-        Stack<Branch> positionStack = new Stack<Branch>();
-        gameObject.transform.forward = gameObject.transform.up;
-        
-        int branchIndex = 0;
-        foreach (char c in SystemResult) {
-            switch (c) {
-                case 'F':
+            Stack<Branch> positionStack = new Stack<Branch>();
+            //gameObject.transform.forward = gameObject.transform.up;
+            
 
-                    GameObject branch = new GameObject("Branch_" + branchIndex);
-                    branch.transform.parent = Parent.transform;
+            int branchIndex = 0;
+            foreach (char c in SystemResult) {
+                switch (c) {
+                    case 'F':
 
-                    branchIndex++;
-                    // Render withe Line Renderer
+                        GameObject branch = new GameObject("Branch_" + branchIndex);
+                        branch.transform.parent = Parent.transform;
 
-                    LineRenderer b_lr = branch.AddComponent<LineRenderer>();
-                    b_lr.startWidth = LineWidth;
-                    b_lr.endWidth = LineWidth;
-                    b_lr.positionCount = 2;
-                    b_lr.SetPosition(0, gameObject.transform.position);
-                    b_lr.SetPosition(1, gameObject.transform.position + gameObject.transform.forward);
+                        branchIndex++;
+                        //Render withe Line Renderer
 
-                    Branche b = branch.AddComponent<Branche>();
-                    actualRadius = b.genererBranche(gameObject.transform.position, gameObject.transform.position + gameObject.transform.forward, actualRadius, mat);
-                    depth++;
+                        LineRenderer b_lr = branch.AddComponent<LineRenderer>();
+                        b_lr.startWidth = LineWidth;
+                        b_lr.endWidth = LineWidth;
+                        b_lr.positionCount = 2;
+                        b_lr.SetPosition(0, gameObject.transform.position);
+                        b_lr.SetPosition(1, gameObject.transform.position + gameObject.transform.up * branchLen);
 
-                    gameObject.transform.position += gameObject.transform.forward;
+                        Branche b = branch.AddComponent<Branche>();
+                        actualRadius = b.genererBranche(gameObject.transform.position, gameObject.transform.position + gameObject.transform.up * branchLen, actualRadius, mat, radiusReduction, 16, 1 );
+                        depth++;
 
-                    // Create leaves
-                    if (depth >= MaxDepth) {
-                        GameObject feuilles = Instantiate(FeuillesPrefab, gameObject.transform.position, Quaternion.identity);
-                        float s = Random.Range(minLeafRadius, maxLeafRadius);
-                        feuilles.transform.localScale = new Vector3(s, s, s);
-                    }
+                        gameObject.transform.position += gameObject.transform.up * branchLen;
 
-                    break;
-                case '+':
-                    gameObject.transform.Rotate(0, Theta, 0);
-                    gameObject.transform.Rotate(transform.right, Random.value * Phi);
-                    break;
-                case '-':
-                    gameObject.transform.Rotate(0, -Theta, 0);
-                    gameObject.transform.Rotate(transform.right, Random.value * -Phi);
-                    break;
-                case '[':
-                    positionStack.Push(new Branch() { position = gameObject.transform.position, rotation = gameObject.transform.rotation, radius = actualRadius, depth = depth });
-                    break;
-                case ']':
-                    Branch newTransform = positionStack.Pop();
-                    gameObject.transform.position = newTransform.position;
-                    gameObject.transform.rotation = newTransform.rotation;
-                    actualRadius = newTransform.radius;
-                    depth = newTransform.depth;
-                    break;
+                        //Create leaves
+                        //if (depth >= MaxDepth) {
+                        //    GameObject feuilles = Instantiate(FeuillesPrefab, gameObject.transform.position, Quaternion.identity);
+                        //    float s = Random.Range(minLeafRadius, maxLeafRadius);
+                        //    feuilles.transform.localScale = new Vector3(s, s, s);
+                        //}
+
+                        break;
+                    case '+':
+                        gameObject.transform.Rotate(new Vector3(0, 0, Theta), Space.Self);
+                        gameObject.transform.Rotate(new Vector3(0, Random.Range(0.0f, 180.0f), 0), Space.World);
+                        break;
+                    case '-':
+                        gameObject.transform.Rotate(new Vector3(0, 0, -Theta), Space.Self);
+                        gameObject.transform.Rotate(new Vector3(0, Random.Range(-180.0f, 0.0f), 0), Space.World);
+                        break;
+                    case '[':
+                        positionStack.Push(new Branch() { position = gameObject.transform.position, rotation = gameObject.transform.rotation, radius = actualRadius, depth = depth });
+                        break;
+                    case ']':
+                        Branch newTransform = positionStack.Pop();
+                        gameObject.transform.position = newTransform.position;
+                        gameObject.transform.rotation = newTransform.rotation;
+                        actualRadius = newTransform.radius;
+                        depth = newTransform.depth;
+                        break;
+                }
             }
+            
+
+            //MeshFilter[] meshFilters = Parent.GetComponentsInChildren<MeshFilter>();
+            //CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+            //
+            //int i = 0;
+            //while (i < meshFilters.Length) {
+            //    combine[i].mesh = meshFilters[i].sharedMesh;
+            //    combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+            //    meshFilters[i].gameObject.SetActive(false);
+            //
+            //    i++;
+            //}
+            //// Destroy Children
+            //foreach (Transform child in Parent.transform) {
+            //    GameObject.Destroy(child.gameObject);
+            //}
+            //
+            //MeshFilter meshFilterParent = Parent.AddComponent<MeshFilter>();
+            //Parent.AddComponent<MeshRenderer>().material = mat;
+            //
+            //
+            //meshFilterParent.mesh = new Mesh();
+            //meshFilterParent.mesh.CombineMeshes(combine);
+            //meshFilterParent.mesh.Optimize();
+        } else {
+            StartCoroutine(stepByStep());
         }
-        */
-
-        //MeshFilter[] meshFilters = Parent.GetComponentsInChildren<MeshFilter>();
-        //CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-
-        //int i = 0;
-        //while (i < meshFilters.Length) {
-        //    combine[i].mesh = meshFilters[i].sharedMesh;
-        //    combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-        //    meshFilters[i].gameObject.SetActive(false);
-
-        //    i++;
-        //}
-        //// Destroy Children
-        //foreach (Transform child in Parent.transform) {
-        //    GameObject.Destroy(child.gameObject);
-        //}
-
-        //MeshFilter meshFilterParent = Parent.AddComponent<MeshFilter>();
-        //Parent.AddComponent<MeshRenderer>().material = mat;
-
-
-        //meshFilterParent.mesh = new Mesh();
-        //meshFilterParent.mesh.CombineMeshes(combine);
-        //meshFilterParent.mesh.Optimize();
-
-        StartCoroutine(stepByStep());
     }
 
     IEnumerator stepByStep() {
@@ -146,13 +154,13 @@ public class TreeDrawer : MonoBehaviour
                         b_lr.endWidth = LineWidth;
                         b_lr.positionCount = 2;
                         b_lr.SetPosition(0, gameObject.transform.position);
-                        b_lr.SetPosition(1, gameObject.transform.position + gameObject.transform.forward);
+                        b_lr.SetPosition(1, gameObject.transform.position + gameObject.transform.forward * branchLen);
 
                         Branche b = branch.AddComponent<Branche>();
-                        actualRadius = b.genererBranche(gameObject.transform.position, gameObject.transform.position + gameObject.transform.forward, actualRadius, mat);
+                        actualRadius = b.genererBranche(gameObject.transform.position, gameObject.transform.position + gameObject.transform.forward * branchLen, actualRadius, mat, radiusReduction, 16, 1);
                         depth++;
 
-                        gameObject.transform.position += gameObject.transform.forward;
+                        gameObject.transform.position += gameObject.transform.forward * branchLen;
 
                         // Create leaves
                         if (depth >= MaxDepth) {
@@ -164,11 +172,11 @@ public class TreeDrawer : MonoBehaviour
                         break;
                     case '+':
                         gameObject.transform.Rotate(0, Theta, 0);
-                        gameObject.transform.Rotate(transform.right, Random.value * Phi);
+                        gameObject.transform.Rotate(Vector3.up, Random.Range(0, 360));
                         break;
                     case '-':
                         gameObject.transform.Rotate(0, -Theta, 0);
-                        gameObject.transform.Rotate(transform.right, Random.value * -Phi);
+                        gameObject.transform.Rotate(Vector3.up, Random.Range(0, 360));
                         break;
                     case '[':
                         positionStack.Push(new Branch() { position = gameObject.transform.position, rotation = gameObject.transform.rotation, radius = actualRadius, depth = depth });

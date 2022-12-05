@@ -334,11 +334,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   next: 0
-  SystemResult: 'F[-F][+F][-F[-F][+F]][+F[-F][+F]][-F[-F][+F][-F[-F][+F]][+F[-F][+F]]][+F[-F][+F][-F[-F][+F]][+F[-F][+F]]
-
-'
-  Theta: 30
-  Phi: 45
+  SystemResult: FFFFFFFFFFFFFFFF[+FFFFFFFF[+FFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFFFFFFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FFFFFFFF[+FFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFFFFFFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFFFFFFFFFFFFFFFFFFFF[+FFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFFFFFFFF[+FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX][-FF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX]FFFFFF[+F[+X][-X]FX][-F[+X][-X]FX]FFF[+X][-X]FX
+  Theta: 20
+  Phi: 20
   branches: []
   mat: {fileID: 2100000, guid: ecdfc3060d0708049bad437241e96853, type: 2}
   FeuillesPrefab: {fileID: 2041575948115581365, guid: 909759ca84259ed47af1dce6066d197e, type: 3}
@@ -347,6 +345,9 @@ MonoBehaviour:
   maxLeafRadius: 0.5
   LineWidth: 0.1
   radius: 0.1
+  radiusReduction: 0.98
+  isStepByStep: 0
+  branchLen: 0.5
 --- !u!4 &1449792775
 Transform:
   m_ObjectHideFlags: 0
@@ -355,7 +356,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1449792773}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.004, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
