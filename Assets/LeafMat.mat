@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MyMat
+  m_Name: LeafMat
   m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -63,7 +63,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.817
+    - _Glossiness: 0.255
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -75,6 +75,6 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.4811321, g: 0.31786337, b: 0.2246796, a: 1}
+    - _Color: {r: 0.12646845, g: 0.5471698, b: 0.13084087, a: 0.09411765}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

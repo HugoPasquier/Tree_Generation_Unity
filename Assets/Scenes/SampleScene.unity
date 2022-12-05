@@ -333,11 +333,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ec3fc36c70477f241bc752eafb18d5fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SystemResult: F[-F]+F[-F[-F]+F]+F[-F]+F
-  Theta: 45
-  Phi: 60
+  next: 0
+  SystemResult: 'F[-F][+F][-F[-F][+F]][+F[-F][+F]][-F[-F][+F][-F[-F][+F]][+F[-F][+F]]][+F[-F][+F][-F[-F][+F]][+F[-F][+F]]
+
+'
+  Theta: 30
+  Phi: 45
   branches: []
   mat: {fileID: 2100000, guid: ecdfc3060d0708049bad437241e96853, type: 2}
+  FeuillesPrefab: {fileID: 2041575948115581365, guid: 909759ca84259ed47af1dce6066d197e, type: 3}
+  MaxDepth: 3
+  minLeafRadius: 0.5
+  maxLeafRadius: 0.5
   LineWidth: 0.1
   radius: 0.1
 --- !u!4 &1449792775
