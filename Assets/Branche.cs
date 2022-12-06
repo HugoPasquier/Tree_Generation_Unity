@@ -58,8 +58,12 @@ public class Branche : MonoBehaviour
         float r = radius;
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
+        List<Vector2> uvs = new List<Vector2>();
 
         float pas = 1.0f / (float)nombrePas;
+
+        int uvX = 0;
+        int uvY = 0;
         
         for (int j = 0; j < nombrePas + 1; j++)
         {
@@ -73,13 +77,17 @@ public class Branche : MonoBehaviour
                 Vector3 a = new Vector3(r * Mathf.Cos(theta), 0, r * Mathf.Sin(theta));
                 a = Quaternion.AngleAxis(angle, Vector3.forward) * a;
                 vertices.Add(Vector3.Slerp(dep, fin, j * pas) + a);
+                uvs.Add(new Vector2(uvX, uvY));
+                uvX = (uvX + 1) % 2;
             }
-
+            uvY = (uvY + 1) % 2;
             r *= radiusReduction;
         }
 
         vertices.Add(dep);    //centre couvercle dep
+        uvs.Add(new Vector2(uvX, uvY));
         vertices.Add(fin);    //centre couvercle fin
+        uvs.Add(new Vector2(uvX, uvY));
 
 
         for (int j = 0; j < nombrePas; j++)
@@ -89,9 +97,17 @@ public class Branche : MonoBehaviour
                 triangles.Add((j * (nbMeridien)) + j + i + 1 + nbMeridien);
                 triangles.Add((j * (nbMeridien)) + j + i + 1);
 
+                //uvs.Add(new Vector2(0, 0));
+                //uvs.Add(new Vector2(0, 1));
+                //uvs.Add(new Vector2(1, 0));
+
                 triangles.Add((j * (nbMeridien)) + j + i + 1);
                 triangles.Add((j * (nbMeridien)) + j + i + 1 + nbMeridien);
                 triangles.Add((j * (nbMeridien)) + j + i + 2 + nbMeridien);
+
+                //uvs.Add(new Vector2(1, 0));
+                //uvs.Add(new Vector2(0, 1));
+                //uvs.Add(new Vector2(1, 1));
             }
 
 
@@ -118,6 +134,7 @@ public class Branche : MonoBehaviour
 
         msh.vertices = vertices.ToArray();
         msh.triangles = triangles.ToArray();
+        msh.uv = uvs.ToArray();
 
         gameObject.GetComponent<MeshFilter>().mesh = msh;           // Remplissage du Mesh et ajout du matériel
         gameObject.GetComponent<MeshRenderer>().material = mat;
