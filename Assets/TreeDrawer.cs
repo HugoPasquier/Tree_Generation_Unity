@@ -13,39 +13,41 @@ public class TreeDrawer : MonoBehaviour
         public int depth;
         public List<StructBranch> children;
     }
-    
-    
+
+
 
 
 
     // Site to draw the tree : https://piratefsh.github.io/p5js-art/public/lsystems/
     // Test Tree : F[-F[-F[-F]+F]+F[-F]+F]+F[-F[-F]+F]+F[-F]+F
-
-    public bool next;
-
+    [Header("Generation Settings")]
     [TextArea]
     public string SystemResult = "F[-F]+F[-F[-F]+F]+F[-F]+F"; public float Theta = 45f;
     public float Phi = 60f;
-    public List<GameObject> branches;
-    public Material mat;
-    public GameObject FeuillesPrefab;
-    public int MaxDepth;
-    public float minLeafRadius;
-    public float maxLeafRadius;
+
+    public bool next;
+    public bool isStepByStep = true;
 
     // Line renderer parameters
-    public float LineWidth = 0.1f;
+    private float LineWidth = 0.1f;
+    
+    [Header("Branch parameters")]
     public float radius = 0.1f;
     public float radiusReduction = 0.9f;
     private float actualRadius;
     private int depth = 0;
-    public bool isStepByStep = true;
     public float branchLen = 1.0f;
+    public float branchDeltaLen;
+    public Material mat;
+    public GameObject SpherePrefab;
+    public float jointConst = 2.2f;
 
-    // Leaf parameters
+    [Header("Leaf parameters")]
     public float leafMinRadius = 1;
     public float leafMaxRadius = 5;
     public float leafDeltaScale = 0.1f;
+    public GameObject FeuillesPrefab;
+
 
     // Intern Variables
     private StructBranch currentBranch = new StructBranch() { position = Vector3.zero, 
@@ -91,20 +93,22 @@ public void DrawTree() {
                         branch.transform.parent = Parent.transform;
 
                         branchIndex++;
-                        //Render withe Line Renderer
 
+                        float realBranchLen = branchLen * Random.Range(1.0f - branchDeltaLen, 1.0f + branchDeltaLen);
+
+                        //Render withe Line Renderer
                         LineRenderer b_lr = branch.AddComponent<LineRenderer>();
                         b_lr.startWidth = LineWidth;
                         b_lr.endWidth = LineWidth;
                         b_lr.positionCount = 2;
                         b_lr.SetPosition(0, gameObject.transform.position);
-                        b_lr.SetPosition(1, gameObject.transform.position + gameObject.transform.up * branchLen);
+                        b_lr.SetPosition(1, gameObject.transform.position + gameObject.transform.up * realBranchLen);
 
                         Branche b = branch.AddComponent<Branche>();
-                        actualRadius = b.genererBranche(gameObject.transform.position, gameObject.transform.position + gameObject.transform.up * branchLen, actualRadius, mat, radiusReduction, 16, 1 );
+                        
+                        actualRadius = b.genererBranche(gameObject.transform.position, gameObject.transform.position + gameObject.transform.up * realBranchLen, actualRadius, mat, radiusReduction, 16, 1 );
                         depth++;
-
-                        gameObject.transform.position += gameObject.transform.up * branchLen;
+                        gameObject.transform.position += gameObject.transform.up * realBranchLen;
 
                         StructBranch newNode = new StructBranch();
                         newNode.children = new List<StructBranch>();
@@ -138,6 +142,7 @@ public void DrawTree() {
                         break;
                     case '[':
                         positionStack.Push(currentBranch);
+                        Instantiate(SpherePrefab, gameObject.transform.position, transform.rotation).transform.localScale = new Vector3(actualRadius * jointConst, actualRadius * jointConst, actualRadius * jointConst);
                         break;
                     case ']':
                         currentBranch = positionStack.Pop();
@@ -150,6 +155,7 @@ public void DrawTree() {
             }
 
             LeavesGeneration(initBranch);
+            
             //MeshFilter[] meshFilters = Parent.GetComponentsInChildren<MeshFilter>();
             //CombineInstance[] combine = new CombineInstance[meshFilters.Length];
             //
@@ -212,11 +218,11 @@ public void DrawTree() {
                         gameObject.transform.position += gameObject.transform.forward * branchLen;
 
                         // Create leaves
-                        if (depth >= MaxDepth) {
-                            GameObject feuilles = Instantiate(FeuillesPrefab, gameObject.transform.position, Quaternion.identity);
-                            float s = Random.Range(minLeafRadius, maxLeafRadius);
-                            feuilles.transform.localScale = new Vector3(s, s, s);
-                        }
+                        //if (depth >= MaxDepth) {
+                        //    GameObject feuilles = Instantiate(FeuillesPrefab, gameObject.transform.position, Quaternion.identity);
+                        //    float s = Random.Range(minLeafRadius, maxLeafRadius);
+                        //    feuilles.transform.localScale = new Vector3(s, s, s);
+                        //}
 
                         break;
                     case '+':
