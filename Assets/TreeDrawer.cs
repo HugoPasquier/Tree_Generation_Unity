@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
+using static Unity.VisualScripting.Metadata;
 
 public class TreeDrawer : MonoBehaviour
 {
@@ -9,7 +11,10 @@ public class TreeDrawer : MonoBehaviour
         public Quaternion rotation;
         public float radius;
         public int depth;
+        public List<StructBranch> children;
     }
+    
+    
 
 
 
@@ -37,7 +42,36 @@ public class TreeDrawer : MonoBehaviour
     public bool isStepByStep = true;
     public float branchLen = 1.0f;
 
-    public void DrawTree() {
+    // Leaf parameters
+    public float leafMinRadius = 1;
+    public float leafMaxRadius = 5;
+    public float leafDeltaScale = 0.1f;
+
+    // Intern Variables
+    private StructBranch currentBranch = new StructBranch() { position = Vector3.zero, 
+                                                            rotation = Quaternion.identity, 
+                                                            radius = 0, 
+                                                            depth = 0,
+                                                            children = new List<StructBranch>()};
+
+
+private void LeavesGeneration(StructBranch b) {
+        if (b.children.Count == 0) {
+            GameObject leaf = Instantiate(FeuillesPrefab, b.position, b.rotation);
+            float r = Random.Range(leafMinRadius, leafMaxRadius);
+            leaf.transform.localScale = new Vector3(r * Random.Range(1.0f - leafDeltaScale, 1.0f + leafDeltaScale),
+                                                    r * Random.Range(1.0f - leafDeltaScale, 1.0f + leafDeltaScale),
+                                                    r * Random.Range(1.0f - leafDeltaScale, 1.0f + leafDeltaScale));
+            // Scale handling
+        } else {
+            foreach (StructBranch child in b.children) {
+                LeavesGeneration(child);
+            }
+        }
+    }
+    
+public void DrawTree() {
+        StructBranch initBranch = currentBranch;
         actualRadius = radius;
         if (!isStepByStep) {
             
@@ -49,6 +83,7 @@ public class TreeDrawer : MonoBehaviour
 
             int branchIndex = 0;
             foreach (char c in SystemResult) {
+                
                 switch (c) {
                     case 'F':
 
@@ -71,6 +106,16 @@ public class TreeDrawer : MonoBehaviour
 
                         gameObject.transform.position += gameObject.transform.up * branchLen;
 
+                        StructBranch newNode = new StructBranch();
+                        newNode.children = new List<StructBranch>();
+                        newNode.position = gameObject.transform.position;
+                        newNode.rotation = gameObject.transform.rotation;
+                        newNode.radius = actualRadius;
+                        newNode.depth = depth;
+
+                        currentBranch.children.Add(newNode);
+                        currentBranch = newNode;
+                        
                         //Create leaves
                         //if (depth >= MaxDepth) {
                         //    GameObject feuilles = Instantiate(FeuillesPrefab, gameObject.transform.position, Quaternion.identity);
@@ -81,26 +126,30 @@ public class TreeDrawer : MonoBehaviour
                         break;
                     case '+':
                         gameObject.transform.Rotate(new Vector3(0, 0, Theta), Space.Self);
-                        gameObject.transform.Rotate(new Vector3(0, Random.Range(0.0f, 180.0f), 0), Space.World);
+                        float r1 = Random.Range(0.0f, 180.0f);
+                        gameObject.transform.Rotate(new Vector3(0, r1, 0), Space.World);
+                        Debug.Log("R1 : " + r1);
                         break;
                     case '-':
                         gameObject.transform.Rotate(new Vector3(0, 0, -Theta), Space.Self);
-                        gameObject.transform.Rotate(new Vector3(0, Random.Range(-180.0f, 0.0f), 0), Space.World);
+                        float r2 = Random.Range(0.0f, 180.0f );
+                        gameObject.transform.Rotate(new Vector3(0, r2, 0), Space.World);
+                        Debug.Log("R2 : " + r2);
                         break;
                     case '[':
-                        positionStack.Push(new StructBranch() { position = gameObject.transform.position, rotation = gameObject.transform.rotation, radius = actualRadius, depth = depth });
+                        positionStack.Push(currentBranch);
                         break;
                     case ']':
-                        StructBranch newTransform = positionStack.Pop();
-                        gameObject.transform.position = newTransform.position;
-                        gameObject.transform.rotation = newTransform.rotation;
-                        actualRadius = newTransform.radius;
-                        depth = newTransform.depth;
+                        currentBranch = positionStack.Pop();
+                        gameObject.transform.position = currentBranch.position;
+                        gameObject.transform.rotation = currentBranch.rotation;
+                        actualRadius = currentBranch.radius;
+                        depth = currentBranch.depth;
                         break;
                 }
             }
-            
 
+            LeavesGeneration(initBranch);
             //MeshFilter[] meshFilters = Parent.GetComponentsInChildren<MeshFilter>();
             //CombineInstance[] combine = new CombineInstance[meshFilters.Length];
             //
