@@ -75,7 +75,7 @@ public class Rules : MonoBehaviour
             "F+[-F-XF-X][+FF][--XF[+X]][++F-X]"
             });
 
-        print(ApplyRules("X", 1));
+        print(ApplyRules("X", 5));
     }
 
 }
