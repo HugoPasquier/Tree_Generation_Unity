@@ -31,6 +31,12 @@ public class Branche : MonoBehaviour
 
     Mesh msh;
 
+    public Vector3 computeNormal(Vector3 p1, Vector3 p2, Vector3 p3) {
+        Vector3 v1 = p2 - p1;
+        Vector3 v2 = p3 - p1;
+        Vector3 normal = Vector3.Cross(v1, v2);
+        return normal;
+    }
 
 
     // Start is called before the first frame update
@@ -59,6 +65,7 @@ public class Branche : MonoBehaviour
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         List<Vector2> uvs = new List<Vector2>();
+        List<Vector3> normals = new List<Vector3>();
 
         float pas = 1.0f / (float)nombrePas;
 
@@ -79,6 +86,7 @@ public class Branche : MonoBehaviour
                 vertices.Add(Vector3.Slerp(dep, fin, j * pas) + a);
                 uvs.Add(new Vector2(uvX, uvY));
                 uvX = (uvX + 1) % 2;
+                normals.Add(a.normalized);
             }
             uvY = (uvY + 1) % 2;
             r *= radiusReduction;
@@ -86,9 +94,10 @@ public class Branche : MonoBehaviour
 
         vertices.Add(dep);    //centre couvercle dep
         uvs.Add(new Vector2(uvX, uvY));
+        normals.Add(Vector3.up);
         vertices.Add(fin);    //centre couvercle fin
         uvs.Add(new Vector2(uvX, uvY));
-
+        normals.Add(Vector3.up);
 
         for (int j = 0; j < nombrePas; j++)
             for (int i = 0; i < nbMeridien; i++)
@@ -130,11 +139,22 @@ public class Branche : MonoBehaviour
 
         }
 
+        //Vector3[] normals = new Vector3[vertices.Count];
+        //// --- Normales ---
+        //for (int i = 0; i < vertices.Count - 3; i += 3) {
+        //    normals[i] = computeNormal(vertices[triangles[i]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]);
+        //    normals[i + 1] = normals[i];
+        //    normals[i + 2] = normals[i];
+        //}
+
+
+
         msh = new Mesh();                          // Création et remplissage du Mesh
 
         msh.vertices = vertices.ToArray();
         msh.triangles = triangles.ToArray();
         msh.uv = uvs.ToArray();
+        msh.normals = normals.ToArray();
 
         gameObject.GetComponent<MeshFilter>().mesh = msh;           // Remplissage du Mesh et ajout du matériel
         gameObject.GetComponent<MeshRenderer>().material = mat;
