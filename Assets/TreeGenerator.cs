@@ -24,7 +24,9 @@ public class TreeGenerator : MonoBehaviour
     [Range(1, 6)]
     int iterations;
 
-    IDictionary<string, string> Presets = new Dictionary<string, string>();
+    //IDictionary<string, string> Presets = new Dictionary<string, string>();
+    //Ruleset for a preset
+    public IDictionary<string, List<(string, float)>> RulesSet = new Dictionary<string, List<(string, float)>>();
 
     [Header("Generation Settings")]
     [TextArea]
@@ -79,38 +81,78 @@ public class TreeGenerator : MonoBehaviour
 
     void InitRules()
     {
-        Presets.Clear();
+        RulesSet.Clear();
         string[] linesInRules = rules.Split('\n');
         foreach (string line in linesInRules)
         {
             string[] rule = line.Split('=');
-            Presets.Add(rule[0], rule[1]);
+            List<(string, float)> r = new List<(string, float)>();
+            string[] dif = rule[1].Split('|');
+            foreach (string d in dif) {
+                string[] dif2 = d.Split('%');
+                if(dif2.Length == 2)
+                    Debug.Log(float.Parse(dif2[1]));
+                r.Add((dif2[0], dif2.Length == 1 ? 1.0f : float.Parse(dif2[1]) ));
+            }
+            RulesSet.Add(rule[0], r);
         }
     }
 
-    //apply rules to sentence
-    string ApplyRulesToSentence(string sentence)
-    {
-        string newSentence = "";
+    string findMatchingRule(char c, IDictionary<string, List<(string, float)>> rs) {
+        List<(string, float)> rules = new List<(string, float)>();
+        string rule = null;
+        float minDistance = 0;
 
-        for (int i = 0; i < sentence.Length; i++)
+        //try to find a list of rules matching the character
+        if (rs.TryGetValue(c.ToString(), out rules)) {
+            float choice = Random.Range(0f, 1f);
+            minDistance = Mathf.Abs(Mathf.Abs(rules[0].Item2) - Mathf.Abs(choice));
+            //randomly get a rule in the list
+            foreach ((string, float) possibility in rules) {
+                if (Mathf.Abs(Mathf.Abs(possibility.Item2) - Mathf.Abs(choice)) <= minDistance) {
+                    rule = possibility.Item1;
+                }
+            }
+            return rule;
+        }
+        return null;
+        /*
+        List<string> rules = new List<string,float>();
+        //try to find a rule matching the character
+        if(rs.TryGetValue(c.ToString(), out rules))
         {
+            print(rules);
+            return rules;
+        }
+        return null;*/
+    }
+
+    //apply rules to sentence
+    string ApplyRulesToSentence(string sentence, IDictionary<string, List<(string, float)>> rs) {
+        string newSentence = "";
+        string rule = null;
+        for (int i = 0; i < sentence.Length; i++) {
             char c = sentence[i];
-            string value;
-            if (Presets.TryGetValue(c.ToString(), out value))
-                newSentence += value;
-            else
+            rule = findMatchingRule(c, rs);
+            if (rule != null) {
+                newSentence += rule;
+            } else {
                 newSentence += c;
+            }
+
         }
         return newSentence;
     }
 
+
+
     //take an axiom and an iterator to return a sentence
-    string ApplyRules(string axiom, int iterator)
-    {
+    string ApplyRules(string axiom, int iterator, IDictionary<string, List<(string, float)>> rs) {
+
         string sentence = axiom;
-        for (int i = 0; i < iterator; i++)
-            sentence = ApplyRulesToSentence(sentence);
+        for (int i = 0; i < iterator; i++) {
+            sentence = ApplyRulesToSentence(sentence, rs);
+        }
         return sentence;
     }
 
@@ -229,7 +271,7 @@ public class TreeGenerator : MonoBehaviour
     public void UpdateSystemResult()
     {
         InitRules();
-        SystemResult = ApplyRules(axiom, iterations);
+        SystemResult = ApplyRules(axiom, iterations, RulesSet);
     }
 
     // Start is called before the first frame update
