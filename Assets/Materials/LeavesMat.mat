@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Material 1
+  m_Name: LeavesMat
   m_Shader: {fileID: -6465566751694194690, guid: 8ca63c29156068443989b7cdc35044eb, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
