@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class TreeGenerator : MonoBehaviour
 {
@@ -13,6 +14,12 @@ public class TreeGenerator : MonoBehaviour
         public List<StructBranch> children;
         public bool hasJoint;
     }
+
+    [Header("Save system")]
+    [SerializeField]
+    string loadFile;
+    [SerializeField]
+    string saveFile;
 
     [Header("L-System Settings")]
     [SerializeField]
@@ -35,6 +42,7 @@ public class TreeGenerator : MonoBehaviour
     public float angle = 45f;
 
     [Header("Branch parameters")]
+    [Min(0)]
     public float radius = 0.1f;
     [Range(1, 64)]
     public int steps = 1;
@@ -59,6 +67,7 @@ public class TreeGenerator : MonoBehaviour
     public float leafMinRadius = 1;
     [Min(0)]
     public float leafMaxRadius = 5;
+    [Min(0)]
     public float leafDeltaScale = 0.1f;
     public Texture leavesTex;
     public Color leavesColor;
@@ -292,5 +301,257 @@ public class TreeGenerator : MonoBehaviour
         
     }
 
-    
+    public void savePresetInFile()
+    {
+        StreamWriter sr = File.CreateText("Assets//" + saveFile);
+
+        sr.WriteLine("Rules:" + rules.Replace("\n", "<b>"));
+        sr.WriteLine("Axiom:" + axiom);
+        sr.WriteLine("Iterations:" + iterations);
+        sr.WriteLine("Angle:" + angle);
+        sr.WriteLine("Radius:" + radius);
+        sr.WriteLine("Steps:" + steps);
+        sr.WriteLine("Meridians:" + meridians);
+        sr.WriteLine("RadiusRed:" + radiusReduction);
+        sr.WriteLine("Len:" + branchLen);
+        sr.WriteLine("LenDelta:" + branchDeltaLen);
+        sr.WriteLine("JointConst:" + jointConst);
+        sr.WriteLine("BranchCol:" + branchColor);
+        sr.WriteLine("LeafMinRad:" + leafMinRadius);
+        sr.WriteLine("LeafMaxRad:" + leafMaxRadius);
+        sr.WriteLine("LeafDeltaScale:" + leafDeltaScale);
+        sr.WriteLine("LeafColor:" + leavesColor);
+        sr.Close();
+
+        Debug.Log("Current preset has been saved in" + loadFile + "." );
+    }
+
+    public void loadPresetFromFile()
+    {
+        FileInfo theSourceFile = new FileInfo("Assets/" + loadFile);
+        StreamReader reader = theSourceFile.OpenText();
+        string readline;
+        string[] readlines;
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if(readlines[0] == "Rules")
+            rules = readlines[1].Replace("<b>", "\n");
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "Axiom")
+            axiom = readlines[1];
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "Iterations")
+            iterations = int.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "Angle")
+            angle = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "Radius")
+            radius = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "Steps")
+           steps = int.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "Meridians")
+            meridians = int.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "RadiusRed")
+            radiusReduction = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "Len")
+            branchLen = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "LenDelta")
+            branchDeltaLen = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "JointConst")
+            jointConst = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "BranchCol")
+        {
+            string[] rgba = readlines[1].Substring(5, readlines[1].Length - 6).Split(", ");
+            branchColor = new Color(float.Parse(rgba[0].Replace('.', ',')), float.Parse(rgba[1].Replace('.', ',')), float.Parse(rgba[2].Replace('.', ',')), float.Parse(rgba[3].Replace('.', ',')));
+        }
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "LeafMinRad")
+            leafMinRadius = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "LeafMaxRad")
+            leafMaxRadius = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "LeafDeltaScale")
+            leafDeltaScale = float.Parse(readlines[1]);
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        readline = reader.ReadLine();
+        readlines = readline.Split(":");
+        if (readlines[0] == "LeafColor")
+        {
+            string[] rgba = readlines[1].Substring(5, readlines[1].Length - 6).Split(", ");
+            leavesColor = new Color(float.Parse(rgba[0].Replace('.', ',')), float.Parse(rgba[1].Replace('.', ',')), float.Parse(rgba[2].Replace('.', ',')), float.Parse(rgba[3].Replace('.', ',')));
+        }
+        else
+        {
+            Debug.Log(loadFile + " is not valid.");
+            return;
+        }
+
+        reader.Close();
+        Debug.Log(loadFile + " has been loaded.");
+    }
+
+    public void loadPreset1()
+    {
+        rules = "F=FF\nX=F[+X][-X]FX";
+        axiom = "X";
+        iterations = 3;
+        angle = 30;
+        radius = 1.0f;
+        steps = 64;
+        meridians = 64;
+        radiusReduction = 0.998f;
+        branchLen = 2;
+        branchDeltaLen = 0.684f;
+        jointConst = 2.0f;
+        Color newCol;
+        if (ColorUtility.TryParseHtmlString("#413123", out newCol))
+            branchColor = newCol;
+        leafMinRadius = 2;
+        leafMaxRadius = 8;
+        leafDeltaScale = 0.1f;
+        if (ColorUtility.TryParseHtmlString("#7FB143", out newCol))
+            leavesColor = newCol;
+
+        Debug.Log("Preset 1 has been loaded.");
+    }
+
+    public void loadPreset2()
+    {
+        rules = "F=F[+F]F[-F]F";
+        axiom = "F";
+        iterations = 2;
+        angle = 25;
+        radius = 0.8f;
+        steps = 4;
+        meridians = 32;
+        radiusReduction = 0.94f;
+        branchLen = 3;
+        branchDeltaLen = 0.25f;
+        jointConst = 2.0f;
+        Color newCol;
+        if (ColorUtility.TryParseHtmlString("#B7B6B6", out newCol))
+            branchColor = newCol;
+        leafMinRadius = 1;
+        leafMaxRadius = 3;
+        leafDeltaScale = 0.1f;
+        if (ColorUtility.TryParseHtmlString("#FF9420", out newCol))
+            leavesColor = newCol;
+
+        Debug.Log("Preset 2 has been loaded.");
+    }
+
+
 }

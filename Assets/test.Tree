@@ -1,0 +1,16 @@
+Rules:F=FF<b>X=F[-X]F[-X]+X
+Axiom:X
+Iterations:4
+Angle:47,75
+Radius:3,12
+Steps:14
+Meridians:32
+RadiusRed:0,99
+Len:1
+LenDelta:0,25
+JointConst:2
+BranchCol:RGBA(0.234, 0.255, 0.137, 1.000)
+LeafMinRad:1
+LeafMaxRad:5
+LeafDeltaScale:0,1
+LeafColor:RGBA(0.694, 0.263, 0.400, 1.000)

@@ -8,8 +8,35 @@ public class TreeGeneratorEditor : Editor
 {
     public override void OnInspectorGUI()
     {
-        base.OnInspectorGUI();
         TreeGenerator TG = (TreeGenerator)target;
+
+        if (GUILayout.Button("Load Preset 1"))
+        {
+            TG.loadPreset1();
+            TG.UpdateSystemResult();
+            TG.DrawTree();
+        }
+        if (GUILayout.Button("Load Preset 2"))
+        {
+            TG.loadPreset2();
+            TG.UpdateSystemResult();
+            TG.DrawTree();
+        }
+
+        if (GUILayout.Button("Load Custom Preset"))
+        {
+            TG.loadPresetFromFile();
+            TG.UpdateSystemResult();
+            TG.DrawTree();
+        }
+
+        if (GUILayout.Button("Save Custom Preset"))
+        {
+            TG.savePresetInFile();
+        }
+
+        base.OnInspectorGUI();
+        
 
         if (GUILayout.Button("Generate new system result"))
         {
