@@ -85,14 +85,14 @@ public class TreeGenerator : MonoBehaviour
         string[] linesInRules = rules.Split('\n');
         foreach (string line in linesInRules)
         {
-            string[] rule = line.Split('=');
             List<(string, float)> r = new List<(string, float)>();
-            string[] dif = rule[1].Split('|');
-            foreach (string d in dif) {
-                string[] dif2 = d.Split('%');
-                if(dif2.Length == 2)
-                    Debug.Log(float.Parse(dif2[1]));
-                r.Add((dif2[0], dif2.Length == 1 ? 1.0f : float.Parse(dif2[1]) ));
+            string[] rule = line.Split('='); 
+            string[] subRule = rule[1].Split('|');
+            foreach (string sr in subRule) {
+                string[] coefRule = sr.Split('%');
+                if(coefRule.Length == 2)
+                    Debug.Log(float.Parse(coefRule[1]));
+                r.Add((coefRule[0], coefRule.Length == 1 ? 1.0f : float.Parse(coefRule[1]) ));
             }
             RulesSet.Add(rule[0], r);
         }
@@ -101,30 +101,34 @@ public class TreeGenerator : MonoBehaviour
     string findMatchingRule(char c, IDictionary<string, List<(string, float)>> rs) {
         List<(string, float)> rules = new List<(string, float)>();
         string rule = null;
-        float minDistance = 0;
-
+        
         //try to find a list of rules matching the character
         if (rs.TryGetValue(c.ToString(), out rules)) {
-            float choice = Random.Range(0f, 1f);
-            minDistance = Mathf.Abs(Mathf.Abs(rules[0].Item2) - Mathf.Abs(choice));
+            // if there is only one rule, return it
+            if (rules.Count == 1){
+                return rules[0].Item1;
+            }
+
+            // Checking if the sum of all rule coeff equal 1
+            float sum = 0;
+            foreach((string, float) r in rules){
+                sum += r.Item2;
+            }
+            if (sum != 1.0f)
+                return null;
+
             //randomly get a rule in the list
-            foreach ((string, float) possibility in rules) {
-                if (Mathf.Abs(Mathf.Abs(possibility.Item2) - Mathf.Abs(choice)) <= minDistance) {
+            float choice = Random.Range(0f, 1f);
+            sum = 0;
+            foreach ((string, float) possibility in rules){
+                sum += possibility.Item2;
+                if (choice <= sum){
                     rule = possibility.Item1;
+                    break;
                 }
             }
-            return rule;
         }
-        return null;
-        /*
-        List<string> rules = new List<string,float>();
-        //try to find a rule matching the character
-        if(rs.TryGetValue(c.ToString(), out rules))
-        {
-            print(rules);
-            return rules;
-        }
-        return null;*/
+        return rule;
     }
 
     //apply rules to sentence
