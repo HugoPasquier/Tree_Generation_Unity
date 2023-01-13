@@ -7,7 +7,7 @@ This is a procedural tree generator on Unity based on **L-systems**. This projec
 This is only a prototype, but the main goal of this project is to generate 3D tree models using L-Systems. Moreover we want to build a tool that can be used by graphic designer to create personalized tree more easily.
 
 ### Project Pipeline
-![project pipeline](https://github.com/Tree_Generation_Unity/images/pipeline.png)
+![project pipeline](images/pipeline.png)
 
 ## Team
 * Nicolas Vivier
