@@ -17,12 +17,12 @@ This is only a prototype, but the main goal of this project is to generate 3D tr
 ## Images
 
 ### Different tree types
-![image tree 1](https://github.com/Tree_Generation_Unity/images/img_tree_1.png)
-![image tree 2](https://github.com/Tree_Generation_Unity/images/img_tree_2.png)
-![image tree 3](https://github.com/Tree_Generation_Unity/images/img_tree_3.png)
+![image tree 1](images/img_tree_1.png)
+![image tree 2](images/img_tree_2.png)
+![image tree 3](images/img_tree_3.png)
 
 ### Shader Animation
-![shader animation](https://github.com/Tree_Generation_Unity/images/shader_animation.gif)
+![shader animation](images/shader_animation.gif)
 
 ### Editor
-![editor animation](https://github.com/Tree_Generation_Unity/images/editor_animation.gif)
+![editor animation](images/editor_animation.gif)
